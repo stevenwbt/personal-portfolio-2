@@ -1,0 +1,340 @@
+@import 'tailwindcss';
+
+@theme {
+  /*
+    Helvetica Neue is a system face on Apple platforms, so it loads with no
+    request. Inter sits behind it as the closest webfont for everyone else.
+  */
+  --font-sans: 'Helvetica Neue', 'Inter', Arial, sans-serif;
+  /*
+    The display face: nav, headings, case-study titles, stat figures.
+    Recoleta goes in front of this once the webfont licence lands — see
+    "Recoleta" in the README. Newsreader stays as the fallback.
+  */
+  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+  --font-nav: var(--font-serif);
+  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-page: #ffffff;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #545454;
+  --color-ink-faint: #b8b8b8;
+  --color-ink-mute: #9a9a9a;
+  --color-graphite: #4d4d4d;
+  /* Neutral card surface: image placeholders, photo backdrops. */
+  --color-veil: #d9d9d6;
+
+  /* Accordant's accent, and the red the research callouts are drawn in. */
+  --color-accent: #b62d07;
+  --color-accent-hot: #e0301a;
+  --color-accent-wash: #fbeae6;
+
+  --color-acid: #c0ff00;
+  /* The green from assets/images/clover.svg — what a formed clover becomes. */
+  --color-clover: #b5e640;
+  --color-blush: #ff8fb1;
+
+  --color-chip-forest: #2f7248;
+  --color-chip-vermilion: #c4331b;
+  --color-chip-magenta: #d42088;
+  --color-chip-cerulean: #2c9ac4;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-acid);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/*
+  The stage.
+
+  Under `lg` every piece sits in normal document flow so the page reads as a
+  plain column on a phone. At `lg` and up the pieces take the scattered
+  positions defined per-element as --top / --left / --w custom properties.
+*/
+@media (min-width: 1024px) {
+  .stage-item {
+    position: absolute;
+    top: var(--top);
+    left: var(--left);
+    width: var(--w);
+    margin: 0;
+  }
+}
+
+/*
+  Work cards take their share of the five-column grid only once that grid
+  exists. Below `sm` the list is one column, where a span would create implicit
+  columns and leave the cards unequal widths.
+*/
+@media (min-width: 40rem) {
+  .work-card,
+  .metric,
+  .playground-tile {
+    grid-column: span var(--span) / span var(--span);
+  }
+}
+
+
+/*
+  Case-study rhythm.
+
+  Three gaps, applied by relationship rather than per element:
+    15px  eyebrow -> heading
+    20px  heading -> body, and between paragraphs
+    40px  around a content block (image, stat row, card list, callout)
+*/
+.case-section > * + * {
+  margin-top: 20px;
+}
+.case-section > .eyebrow + * {
+  margin-top: 15px;
+}
+.case-section > * + .case-block,
+.case-section > .case-block + * {
+  margin-top: 40px;
+}
+
+/* ── About: the trail box and its cards ───────────────────────────── */
+
+/* Dashed underline drawn as a gradient — text-decoration gives no control
+   over dash length. 5px dash, 4px gap. */
+.u-dot {
+  padding-bottom: 3px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-ink-faint) 0 5px,
+    transparent 5px 9px
+  );
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: repeat-x;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* No viewBox, so one SVG unit is one CSS pixel and the dashes stay 7px
+   however the box resizes. */
+.trailbox-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.trailbox-frame rect {
+  x: 0.5px;
+  y: 0.5px;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  rx: 10px;
+  fill: none;
+  stroke: --alpha(var(--color-ink) / 18%);
+  stroke-width: 1px;
+  stroke-dasharray: 7 7;
+}
+
+.trail-card,
+.peek-card {
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--color-veil);
+  will-change: transform, opacity;
+}
+
+.trail-card {
+  z-index: 2;
+  width: 185px;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  border: 1px solid;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+  animation: trail-pop 1.4s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* The snapshot a hovered word pins, centred in the box. Height drives the
+   size so a short box can never squash the frame. */
+.peek-card {
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  height: min(330px, calc(100% - 56px));
+  width: auto;
+  max-width: calc(100% - 56px);
+  border-radius: 4px;
+  border: 1px solid --alpha(var(--color-ink) / 12%);
+  box-shadow: 0 8px 26px rgb(0 0 0 / 0.16);
+  animation: peek-in 0.38s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.trail-card img,
+.peek-card img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.tc-label {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 18px 7px 6px;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent);
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* Pointer-only flourish: a tablet can be wide but has nothing to hover with. */
+@media (hover: none) {
+  .trailbox {
+    display: none;
+  }
+}
+
+@keyframes trail-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.82) rotate(var(--rot-in, 0deg));
+  }
+  16%,
+  46% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rot, 0deg));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -58%) scale(0.94) rotate(var(--rot, 0deg));
+  }
+}
+
+@keyframes peek-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, calc(var(--drift, 6px) * -1), 0);
+  }
+  to {
+    transform: translate3d(0, var(--drift, 6px), 0);
+  }
+}
+
+/* The chip's shape. MorphSVG tweens the path between square and circle. */
+.chip-shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/*
+  A stamped clover, centred on the parent's top-left corner — the point it was
+  stamped at. `multiply` lets the overlapping lobes read as translucent petals.
+*/
+.clover-stamp {
+  position: absolute;
+  left: -100%;
+  top: -100%;
+  width: 200%;
+  height: 200%;
+}
+
+/* A square reappearing at home after the clover is stamped. */
+@keyframes pop {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* The clover landing on the page. */
+@keyframes stamp {
+  0% {
+    opacity: 0.4;
+    scale: 1.35;
+  }
+  60% {
+    scale: 0.94;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-drift {
+  animation: drift var(--dur, 7s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+
+.animate-pop {
+  animation: pop 0.55s ease-out both;
+}
+
+.animate-stamp {
+  animation: stamp 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift,
+  .animate-rise,
+  .animate-pop,
+  .animate-stamp {
+    animation: none;
+  }
+}
