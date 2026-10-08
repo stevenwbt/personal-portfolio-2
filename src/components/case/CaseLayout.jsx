@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Link from '../Link'
 import { Eyebrow, Figure, Slot } from './parts'
 
@@ -16,6 +17,25 @@ export default function CaseLayout({
   meta,
   children,
 }) {
+  /*
+    Which section is being read: the one crossing a thin band just above the
+    middle of the screen. An observer rather than a scroll listener, so it
+    reads where sections actually render even under the smoother's transforms.
+  */
+  const [active, setActive] = useState(null)
+  useEffect(() => {
+    const els = sections.map((s) => document.getElementById(s.id)).filter(Boolean)
+    if (!els.length) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => e.isIntersecting && setActive(e.target.id))
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [sections])
+
   return (
     <main className="mx-auto w-full max-w-[1800px] px-5 pt-28 sm:px-[2.2%]">
       {/*
@@ -37,10 +57,18 @@ export default function CaseLayout({
               &larr; Back
             </Link>
 
-            <ul className="space-y-[1.1em] text-[clamp(0.95rem,1.15vw,1.15rem)] text-ink-soft">
+            {/* The current section wears the same acid highlight as selected
+                text — acid as a text colour alone would vanish on white. */}
+            <ul className="space-y-[1.1em] text-[clamp(0.95rem,1.15vw,1.15rem)] text-ink-mute">
               {sections.map((s) => (
                 <li key={s.id}>
-                  <a href={`#${s.id}`} className="transition-colors hover:text-ink">
+                  <a
+                    href={`#${s.id}`}
+                    aria-current={active === s.id ? 'location' : undefined}
+                    className={`-mx-1 px-1 transition-colors duration-200 ${
+                      active === s.id ? 'bg-acid text-ink' : 'hover:text-ink'
+                    }`}
+                  >
                     {s.label}
                   </a>
                 </li>

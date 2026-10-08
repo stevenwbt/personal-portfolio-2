@@ -1,6 +1,7 @@
 export default function Snapshot({ photo }) {
   return (
     <figure
+      data-photo
       className="stage-item group relative z-10 m-0"
       style={{ '--top': photo.top, '--left': photo.left, '--w': photo.w }}
     >
@@ -19,9 +20,6 @@ export default function Snapshot({ photo }) {
               className="aspect-[20/9] w-full object-cover grayscale transition duration-500 ease-out group-hover:scale-[1.04] group-hover:grayscale-0"
             />
           </div>
-          <figcaption className="pointer-events-none mt-1.5 text-[0.7rem] text-ink-faint opacity-0 transition-opacity duration-300 group-hover:opacity-100 max-lg:opacity-100">
-            {photo.caption}
-          </figcaption>
         </div>
       </div>
     </figure>

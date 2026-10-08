@@ -1,20 +1,24 @@
-import lr08 from '../assets/luckruns/lr08.jpg'
+import bottle1 from '../assets/luckruns/bottles/bottle-1.jpg'
+import bottle2 from '../assets/luckruns/bottles/bottle-2.jpg'
+import bottle3 from '../assets/luckruns/bottles/bottle-3.jpg'
+import bottle4 from '../assets/luckruns/bottles/bottle-4.jpg'
+import bottle5 from '../assets/luckruns/bottles/bottle-5.jpg'
+import bottle6 from '../assets/luckruns/bottles/bottle-6.jpg'
+import bottle7 from '../assets/luckruns/bottles/bottle-7.jpg'
+import bottle8 from '../assets/luckruns/bottles/bottle-8.jpg'
 
 /*
-  Nine fragrances. The name carries the moment — a time of day, a mood, often a
-  place — and the notes it's built from sit under it.
-
-  A bottle render goes in `image`; without one the entry falls back to a grey
-  slot, so the collection can fill in one fragrance at a time.
+  The collection, as it actually exists: hand-filled bottles, most still
+  wearing the batch number and date they were blended on. No names yet — the
+  carousel shows the work rather than claiming a finished line-up.
 */
-export const FRAGRANCES = [
-  { id: 'lr01', name: 'LR 01 - A wet coastal noon, Maui', notes: 'Sea Breeze, Pineapple, Pine Needle, Vetiver.' },
-  { id: 'lr02', name: 'LR 02 - Misty dawn, sacred, and smoky', notes: 'Pine Needle, Frankincense, Cedarwood' },
-  { id: 'lr03', name: 'LR 03 - Spring noon, tender and fleeting', notes: 'Lychee, Cherry Blossom, Musk' },
-  { id: 'lr04', name: 'LR 04 - Late afternoon, warm and intimate, NYC', notes: 'Neroli, Chocolate, Tonka Bean, Amber' },
-  { id: 'lr05', name: 'LR 05 - Ceremonial morning, boozy floral, Boston', notes: 'Blackcurrant, Aldehydes, Lily, Oud' },
-  { id: 'lr06', name: 'LR 06 - Early morning, dewy and quiet, Italy', notes: 'Lemon, Aldehydes, White Tea, White Musk' },
-  { id: 'lr07', name: 'LR 07 - The hour before sunset, sensual, coastal', notes: 'Bergamot, Sea Salt, Mint, Geranium, Amber' },
-  { id: 'lr08', name: 'LR 08 - Early morning, dark floral and intimate', notes: 'Black Dahlia Tulip, Magnolia, White Tea, Bergamot', image: lr08 },
-  { id: 'lr09', name: 'LR 09 - Deep night, warm, and quiet, Bali', notes: 'Coconut, Chamomile, Dahlia, Sandalwood' },
+export const BOTTLES = [
+  { src: bottle1, alt: 'A Luckruns bottle labelled LR #6, blended 05/25' },
+  { src: bottle2, alt: 'An unlabelled Luckruns bottle, pale gold' },
+  { src: bottle3, alt: 'A Luckruns bottle labelled LR #4, v.2, midnight' },
+  { src: bottle4, alt: 'An unlabelled Luckruns bottle on a pale wood table' },
+  { src: bottle5, alt: 'A Luckruns bottle labelled LR #5, midnight' },
+  { src: bottle6, alt: 'A Luckruns bottle labelled LR #5, v.2, night' },
+  { src: bottle7, alt: 'A Luckruns bottle labelled LR #7, blended 05/26' },
+  { src: bottle8, alt: 'An empty Luckruns bottle, catching the light' },
 ]

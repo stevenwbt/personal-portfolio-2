@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-39202e7c-7c3d-4425-b332-a5d26a984e18/styles.css">
+  <script src="_ds/modernist-39202e7c-7c3d-4425-b332-a5d26a984e18/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); overflow-x: hidden; }
+    a { color: var(--color-accent); } a:hover { color: var(--color-accent-700); }
+  </style>
+</helmet>
+<main ref="{{ stageRef }}" style="position:relative; min-height:100vh; height:100vh; overflow:hidden; background:var(--color-bg); border-bottom:2px solid var(--color-divider); font-family:var(--font-body)">
+
+  <div data-item="sq0" style="position:absolute; left:0; top:0; width:clamp(36px,4.5vw,64px); height:clamp(36px,4.5vw,64px); background:var(--color-accent); will-change:transform; opacity:0"></div>
+  <div data-item="sq1" style="position:absolute; left:0; top:0; width:clamp(36px,4.5vw,64px); height:clamp(36px,4.5vw,64px); background:var(--color-accent-700); will-change:transform; opacity:0"></div>
+  <div data-item="sq2" style="position:absolute; left:0; top:0; width:clamp(36px,4.5vw,64px); height:clamp(36px,4.5vw,64px); background:var(--color-accent-400); will-change:transform; opacity:0"></div>
+  <div data-item="sq3" style="position:absolute; left:0; top:0; width:clamp(36px,4.5vw,64px); height:clamp(36px,4.5vw,64px); background:var(--color-text); will-change:transform; opacity:0"></div>
+
+  <div data-item="clover" style="position:absolute; left:0; top:0; width:clamp(72px,9vw,128px); height:clamp(72px,9vw,128px); will-change:transform; opacity:0">
+    <div style="position:absolute; left:26.5%; top:0; width:47%; height:47%; border-radius:50%; background:var(--color-accent)"></div>
+    <div style="position:absolute; left:26.5%; top:53%; width:47%; height:47%; border-radius:50%; background:var(--color-accent)"></div>
+    <div style="position:absolute; left:0; top:26.5%; width:47%; height:47%; border-radius:50%; background:var(--color-accent)"></div>
+    <div style="position:absolute; left:53%; top:26.5%; width:47%; height:47%; border-radius:50%; background:var(--color-accent)"></div>
+    <div style="position:absolute; left:26.5%; top:26.5%; width:47%; height:47%; background:var(--color-accent)"></div>
+  </div>
+
+  <div data-item="ph0" class="grayscale" style="position:absolute; left:0; top:0; width:clamp(150px,18vw,260px); height:clamp(70px,8.3vw,120px); will-change:transform; opacity:0; box-shadow:var(--shadow-sm)"><image-slot id="photo-1" shape="rect" placeholder="Drop photo 1"></image-slot></div>
+  <div data-item="ph1" class="grayscale" style="position:absolute; left:0; top:0; width:clamp(150px,18vw,260px); height:clamp(70px,8.3vw,120px); will-change:transform; opacity:0; box-shadow:var(--shadow-sm)"><image-slot id="photo-2" shape="rect" placeholder="Drop photo 2"></image-slot></div>
+  <div data-item="ph2" class="grayscale" style="position:absolute; left:0; top:0; width:clamp(150px,18vw,260px); height:clamp(70px,8.3vw,120px); will-change:transform; opacity:0; box-shadow:var(--shadow-sm)"><image-slot id="photo-3" shape="rect" placeholder="Drop photo 3"></image-slot></div>
+  <div data-item="ph3" class="grayscale" style="position:absolute; left:0; top:0; width:clamp(150px,18vw,260px); height:clamp(70px,8.3vw,120px); will-change:transform; opacity:0; box-shadow:var(--shadow-sm)"><image-slot id="photo-4" shape="rect" placeholder="Drop photo 4"></image-slot></div>
+
+  <div data-word style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.9); opacity:0; display:flex; flex-direction:column; align-items:flex-start; gap:var(--space-2); z-index:2; pointer-events:none; will-change:transform,opacity">
+    <div style="font-family:var(--font-heading); font-weight:800; font-size:clamp(40px,7vw,140px); line-height:0.95; letter-spacing:-0.04em; color:var(--color-accent)">stéwithme</div>
+  </div>
+
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;speed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.5,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Animation&quot;},&quot;revolveSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:3.5,&quot;min&quot;:1,&quot;max&quot;:10,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Animation&quot;},&quot;driftAfter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Animation&quot;}}">
+class Component extends DCLogic {
+  stageRef = React.createRef();
+  // final layout as fractions of stage size (from reference)
+  FINAL = { sq2:[0.68,0.06], clover:[0.90,0.08], ph0:[0.56,0.26], sq3:[0.97,0.30], ph1:[0.80,0.50], ph2:[0.08,0.62], ph3:[0.44,0.80], sq1:[0.26,0.90], sq0:[0.06,0.98] };
+  ORDER = ['sq2','ph0','sq3','ph1','clover','ph3','sq1','ph2','sq0'];
+  componentDidMount() {
+    const stage = this.stageRef.current;
+    this.els = {}; stage.querySelectorAll('[data-item]').forEach(e => { this.els[e.dataset.item] = e; });
+    this.word = stage.querySelector('[data-word]');
+    const rnd = (a,b) => a + Math.random()*(b-a);
+    this.start = {}; this.seed = {};
+    this.ORDER.forEach(k => { this.start[k] = [rnd(0.05,0.9), rnd(0.05,0.85)]; this.seed[k] = [rnd(0,6.28), rnd(0,6.28), rnd(0.6,1.1)]; });
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.t0 = performance.now() - (reduce ? 20000 : 0);
+    this.raf = requestAnimationFrame(this.frame);
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+  ease = x => x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2;
+  frame = (now) => {
+    this.raf = requestAnimationFrame(this.frame);
+    const stage = this.stageRef.current; if (!stage) return;
+    const speed = this.props.speed ?? 1;
+    const t = ((now - this.t0)/1000) * speed;
+    const W = stage.clientWidth, H = stage.clientHeight;
+    const rev = this.props.revolveSeconds ?? 3.5;
+    const T1 = 2.6, T2 = T1 + 1.4, T3 = T2 + rev, T4 = T3 + 1.5; // float → gather → revolve → scramble
+    const R = Math.min(W,H) * 0.36, cx = W/2, cy = H/2;
+    const drift = this.props.driftAfter ?? true;
+    const n = this.ORDER.length;
+    const hdr = 0;
+    this.ORDER.forEach((k, i) => {
+      const el = this.els[k]; const w = el.offsetWidth, h = el.offsetHeight;
+      const [sx, sy, sp] = this.seed[k];
+      const floatPos = (tt, amp) => [ this.start[k][0]*W + Math.sin(tt*sp + sx)*amp, this.start[k][1]*H + Math.cos(tt*sp*0.8 + sy)*amp ];
+      const ang = (tt) => -Math.PI/2 + (i/n)*Math.PI*2 + (tt - T1) * 0.9;
+      const circ = (tt) => [ cx + Math.cos(ang(tt))*R - w/2, cy + Math.sin(ang(tt))*R - h/2 ];
+      const fin = (tt) => [ this.FINAL[k][0]*(W-w) + (drift ? Math.sin(tt*0.5*sp + sx)*6 : 0), (hdr + this.FINAL[k][1]*(H-h-hdr)) + (drift ? Math.cos(tt*0.4*sp + sy)*6 : 0) ];
+      let p, op = 1;
+      if (t < 0.4) { p = floatPos(t, 24); op = t/0.4; }
+      else if (t < T1) p = floatPos(t, 24);
+      else if (t < T2) { const e = this.ease((t-T1)/(T2-T1)); const a = floatPos(t,24), b = circ(t); p = [a[0]+(b[0]-a[0])*e, a[1]+(b[1]-a[1])*e]; }
+      else if (t < T3) p = circ(t);
+      else if (t < T4) { const e = this.ease((t-T3)/(T4-T3)); const a = circ(t), b = fin(t); p = [a[0]+(b[0]-a[0])*e, a[1]+(b[1]-a[1])*e]; }
+      else p = fin(t);
+      if (k === 'clover' && t > T3) op = Math.max(0, 1 - (t - T3) / 0.8); // clover fades out as the ring breaks
+      el.style.opacity = op;
+      el.style.transform = `translate3d(${p[0].toFixed(1)}px,${p[1].toFixed(1)}px,0)`;
+    });
+    if (this.word) {
+      const e = Math.max(0, Math.min(1, (t - T2 + 0.4)/1.2));
+      this.word.style.opacity = e;
+      this.word.style.transform = `translate(-50%,-50%) scale(${0.9 + 0.1*this.ease(e)})`;
+    }
+  };
+  renderVals() { return { stageRef: this.stageRef }; }
+}
+</script>
+</body>
+</html>

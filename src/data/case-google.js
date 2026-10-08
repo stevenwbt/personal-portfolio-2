@@ -1,10 +1,11 @@
 import gui from '../assets/google/gui.jpg'
 import pipeline from '../assets/google/pipeline.gif'
 import pipelineStill from '../assets/google/pipeline-still.jpg'
+import bereal from '../assets/google/bereal.jpg'
 import hero from '../assets/google/hero.jpg'
 import workflow from '../assets/google/workflow.jpg'
 
-export const IMAGES = { hero, gui, workflow, pipeline, pipelineStill }
+export const IMAGES = { hero, bereal, gui, workflow, pipeline, pipelineStill }
 
 export const SECTIONS = [
   { id: 'overview', label: 'Overview' },

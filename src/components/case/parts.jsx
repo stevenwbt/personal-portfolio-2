@@ -23,9 +23,9 @@ export const Body = ({ children, className = '' }) => (
 )
 
 /* A grey frame standing in for artwork that isn't in the repo yet. */
-export const Slot = ({ label, ratio = '16 / 9' }) => (
+export const Slot = ({ label, ratio = '16 / 9', bg = 'bg-veil' }) => (
   <div
-    className="case-block flex items-end justify-start rounded-xl bg-veil p-4"
+    className={`case-block flex items-end justify-start rounded-xl p-4 ${bg}`}
     style={{ aspectRatio: ratio }}
   >
     <span className="font-mono text-[0.62rem] tracking-[0.1em] text-ink-faint uppercase">

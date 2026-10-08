@@ -12,6 +12,7 @@ const GRAB_RADIUS = 0.85 // multiples of chip size
 const PHOTO_RATIO = 9 / 20 // Snapshot's aspect
 const MAX_STICKERS = 20
 const DESKTOP = '(min-width: 1024px)'
+const TIP_CHIP = 0 // the square the onboarding tooltip starts on
 
 const pct = (v) => parseFloat(v) / 100
 
@@ -115,17 +116,23 @@ function scatterHomes(W, H, size, stickers) {
   Positions are driven imperatively in a rAF loop rather than through React
   state, so a frame costs one transform write per chip and no re-render.
 */
-export default function ChipField({ stageRef }) {
+export default function ChipField({ stageRef, onClover, idle = false }) {
   const wrapRefs = useRef([])
   const [stickers, setStickers] = useState([])
   const [cycle, setCycle] = useState(0)
   // Which chips are in hand, and which quadrant each took, by pick-up order.
   const [held, setHeld] = useState(() => CHIPS.map(() => -1))
   const pathRefs = useRef([])
+  const tipRef = useRef(null)
   /* What each path was last told to be. Without this the effect re-tweens all
      four chips on every pick-up, and a no-op fill tween starts from
      transparent — which reads as the untouched squares blinking. */
   const applied = useRef({ shape: CHIPS.map(() => SQUARE), fill: CHIPS.map((c) => c.color) })
+  /* Read inside the frame loop, so toggling it doesn't tear the loop down. */
+  const idleRef = useRef(idle)
+  useEffect(() => {
+    idleRef.current = idle
+  }, [idle])
 
   const world = useRef({
     ready: false,
@@ -143,6 +150,28 @@ export default function ChipField({ stageRef }) {
   /* Three shapes: a square at rest, a circle in hand, and a petal once all
      four are in — the petals' points meet at the centre to make the clover. */
   const complete = held.every((q) => q >= 0)
+
+  /*
+    First-visit onboarding: a tooltip that rides above the squares and walks
+    through the interaction one step at a time. It's only for the first round —
+    once a clover has been stamped, the visitor knows how it works.
+  */
+  const inHand = held.filter((q) => q >= 0).length
+
+  // Tell the page a clover has formed — the wordmark waits for the first one.
+  useEffect(() => {
+    if (complete) onClover?.()
+  }, [complete, onClover])
+  /* No hint while the opening animation is still placing the squares — there's
+     nothing to hover yet. */
+  const tip =
+    cycle > 0 || idle
+      ? null
+      : complete
+        ? 'Clover! Click anywhere on the screen'
+        : inHand > 0
+          ? 'Sweep over the four squares together'
+          : 'Hover around the square'
   useEffect(() => {
     held.forEach((quadrant, i) => {
       const path = pathRefs.current[i]
@@ -177,6 +206,21 @@ export default function ChipField({ stageRef }) {
       const r = stage.getBoundingClientRect()
       w.size = r.width * CHIP_SCALE
       w.stage = { w: r.width, h: r.height }
+      /* Size and place the squares here, not only in the frame loop. While the
+         opening animation holds that loop off they'd otherwise have no width
+         at all and would balloon to fill the stage — and with no transform
+         they'd sit at the stage's top-left corner, then snap a thousand pixels
+         to their places on the loop's first frame. Parking them here means
+         they fade in already where they belong. Once the loop is live it owns
+         the transform, so this only writes it while idle. */
+      wrapRefs.current.forEach((el, i) => {
+        if (!el) return
+        el.style.width = `${w.size}px`
+        el.style.height = `${w.size}px`
+        if (idleRef.current) {
+          el.style.transform = `translate3d(${homeX(i)}px, ${homeY(i)}px, 0)`
+        }
+      })
       if (!w.ready) {
         w.chips.forEach((c, i) => {
           c.x = homeX(i)
@@ -232,7 +276,8 @@ export default function ChipField({ stageRef }) {
 
     function frame() {
       raf = requestAnimationFrame(frame)
-      if (!mq.matches || !w.ready) return
+      // The opening animation owns these elements until it hands them back.
+      if (!mq.matches || !w.ready || idleRef.current) return
 
       const { chips, pointer, size } = w
 
@@ -290,11 +335,21 @@ export default function ChipField({ stageRef }) {
         el.style.height = `${box}px`
         el.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`
       }
+
+      // The tooltip sits centred above whatever it's talking about: the first
+      // square at rest, then the head of the chain in hand, then the clover.
+      const tipEl = tipRef.current
+      if (tipEl) {
+        const lead = chips.find((c) => c.order === 0) ?? chips[TIP_CHIP]
+        tipEl.style.transform = `translate3d(${lead.x + box / 2}px, ${lead.y - 10}px, 0) translate(-50%, -100%)`
+      }
     }
 
     const ro = new ResizeObserver(measure)
     ro.observe(stage)
     measure()
+    // The idle flag flips after mount, so measure again once it settles.
+    const parked = setTimeout(measure, 0)
 
     stage.addEventListener('pointermove', onMove)
     stage.addEventListener('pointerleave', onLeave)
@@ -305,6 +360,7 @@ export default function ChipField({ stageRef }) {
     raf = requestAnimationFrame(frame)
 
     return () => {
+      clearTimeout(parked)
       cancelAnimationFrame(raf)
       ro.disconnect()
       stage.removeEventListener('pointermove', onMove)
@@ -315,7 +371,11 @@ export default function ChipField({ stageRef }) {
   }, [stageRef])
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-30 hidden lg:block" aria-hidden="true">
+    <div
+      data-intro-hide
+      className="pointer-events-none absolute inset-0 z-30 hidden lg:block"
+      aria-hidden="true"
+    >
       {stickers.map((s) => (
         <div
           key={s.id}
@@ -331,12 +391,31 @@ export default function ChipField({ stageRef }) {
         </div>
       ))}
 
+      {tip && (
+        <div ref={tipRef} className="absolute top-0 left-0 will-change-transform">
+          <div className="animate-drift" style={{ '--drift': '3px', '--dur': '2.4s' }}>
+            <p
+              key={tip}
+              className="animate-rise relative rounded-full border border-dashed border-ink-mute bg-[#efefed] px-3 py-1.5 text-[0.78rem] leading-none whitespace-nowrap text-ink-mute"
+              style={{ '--delay': '0s' }}
+            >
+              {tip}
+              {/* The caret, pointing down at the square: a turned square that
+                  shows only its two lower edges, so the dashes run on from the
+                  pill's outline. It overlaps the pill to cover that stretch. */}
+              <span className="absolute top-full left-1/2 size-[9px] -translate-x-1/2 -translate-y-[4.5px] rotate-45 border-r border-b border-dashed border-ink-mute bg-[#efefed]" />
+            </p>
+          </div>
+        </div>
+      )}
+
       {CHIPS.map((chip, i) => (
         <div
           key={`${chip.id}-${cycle}`}
           ref={(el) => {
             wrapRefs.current[i] = el
           }}
+          data-chip
           className="animate-pop absolute top-0 left-0 will-change-transform"
         >
           <svg className="chip-shape" viewBox={`0 0 ${CLOVER_VIEWBOX} ${CLOVER_VIEWBOX}`}>

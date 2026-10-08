@@ -21,6 +21,7 @@ export default function Footprint() {
 
   return (
     <div
+      data-intro-hide
       className="animate-rise mt-14 text-[clamp(0.78rem,0.92vw,1rem)] leading-relaxed text-ink-mute lg:absolute lg:right-[2.2%] lg:bottom-[5%] lg:mt-0 lg:text-right"
       style={{ '--delay': '0.5s' }}
     >

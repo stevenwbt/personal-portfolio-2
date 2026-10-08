@@ -1,4 +1,6 @@
 import dfaApp from '../assets/playground/dfa-app.jpg'
+import flux from '../assets/images/work-flux.webm'
+import fluxPoster from '../assets/images/work-flux.png'
 import dfaExpo from '../assets/playground/dfa-expo.jpg'
 import isauwRecap from '../assets/playground/isauw-recap.jpg'
 import keratonHeadliner from '../assets/playground/keraton-headliner.jpg'
@@ -36,8 +38,19 @@ export const PIECES = [
     ready: true,
     caption: 'Luckruns · Indie fragrance house',
   },
-  /* Held for the next piece — same frame as Luckruns so the row stays level. */
-  { id: 'next', span: 3, ratio: '2817 / 1305' },
+  /* Same frame as Luckruns so the row stays level. The cover's laptop sits in
+     the middle band of its 1.32 artwork, so cropping to 2.16 trims only the
+     white margin above and below it. */
+  {
+    id: 'flux',
+    span: 3,
+    ratio: '2817 / 1305',
+    href: '/work/flux',
+    video: flux,
+    still: fluxPoster,
+    ready: true,
+    caption: 'Flux · AI-driven tools for remote teams',
+  },
 
   { id: 'merch1', span: 2, ratio: '1200 / 1197', image: merch1, ready: true, caption: 'ISAUW · Merch collection' },
   { id: 'merch2', span: 2, ratio: '1200 / 1187', image: merch2, ready: true, caption: 'ISAUW · Merch collection' },

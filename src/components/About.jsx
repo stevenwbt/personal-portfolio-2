@@ -9,9 +9,18 @@ export default function About() {
   return (
     <section
       id="about"
-      aria-label="About"
+      data-intro-hide
+      aria-labelledby="about-heading"
       className="mx-auto w-full max-w-[1800px] px-5 sm:px-[2.2%]"
     >
+      {/* `font-serif` is the Recoleta token — see "Recoleta" in the README. */}
+      <h2
+        id="about-heading"
+        className="about-reveal mb-[clamp(1.25rem,2.2vw,2.25rem)] font-serif text-[clamp(1.5rem,2.3vw,2.05rem)] leading-[1.18] font-normal"
+      >
+        Halo, I&rsquo;m Steven Heng
+      </h2>
+
       {/*
         The trail field sits under the copy rather than across the whole
         section, so it shares the text column's width — and because the grid

@@ -67,6 +67,7 @@ export default function Work() {
   return (
     <section
       id="work"
+      data-intro-hide
       aria-label="Selected work"
       className="mx-auto w-full max-w-[1800px] pt-[clamp(4rem,12vw,14rem)] pb-[clamp(6rem,15vw,17rem)]"
     >
@@ -88,7 +89,14 @@ export default function Work() {
             <Wrap project={project}>
             {/* The cover keeps the fixed height; the caption sits under it, so
                 the article is as tall as both together. */}
-            <div className="relative max-sm:aspect-[16/10] sm:h-[clamp(200px,28.3vw,505px)]">
+            <div
+              style={project.ratio ? { aspectRatio: project.ratio } : undefined}
+              className={
+                project.ratio
+                  ? 'relative w-full'
+                  : 'relative max-sm:aspect-[16/10] sm:h-[clamp(200px,28.3vw,505px)]'
+              }
+            >
             {!project.still ? (
               /* Artwork still to come: hold the slot rather than show nothing. */
               <span className="block h-full w-full rounded-xl bg-veil" />

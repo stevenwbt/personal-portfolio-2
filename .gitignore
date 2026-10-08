@@ -12,8 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Desktop-licensed fonts, for local preview only. Never commit these: the
-# licence forbids putting them on a server, and a repo is a server.
+# The desktop licence forbids putting these on a server, and a repo is a
+# server. The webfont kit is licensed separately and does ship — see
+# src/assets/fonts, which is .woff2/.woff only.
 /local
 *.otf
 *.ttf

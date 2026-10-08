@@ -1,101 +1,105 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { TINTS, TRAIL } from '../../data/about'
+import { useCallback, useEffect, useRef } from 'react'
+import { TRAIL } from '../../data/about'
 
-const THROTTLE = 200 // ms between cards
-const CARD = 185 // px, square
-const PAD = 14 // keeps cards clear of the box edge
-const LIFE = 1400 // ms a card is on screen
+/*
+  A fixed pool of <img>, cycled rather than mounted and unmounted. The list is
+  the photos twice over, so by the time a slot comes round again it has long
+  since faded — with only one pass you'd catch a slot being reused while it was
+  still on screen.
+*/
+const POOL = [...TRAIL, ...TRAIL, ...TRAIL]
+const TAIL = 9 // how many stay up behind the cursor
+const LIFE = 1000 // ms before one fades on its own
+/*
+  The cursor must cross this fraction of the viewport before the next photo
+  drops. At 1/20th that's 76px, which lands them in visible steps; this is
+  about half that, so the trail reads as one ribbon. TAIL rises to match, or a
+  denser trail would just be a shorter one.
+*/
+const GAP = 40
 
 /*
   The shared display surface.
 
-  Wandering the cursor across it drops snapshots in sequence; hovering a dotted
-  word in the copy pins one image instead (`peek`). Scoped to this element
-  rather than the page, so it only fires where it's invited.
+  Wandering the cursor across it lays down snapshots: the next photo appears
+  wherever the pointer has travelled far enough from the last one, and the one
+  five places back is taken down. Hovering a dotted word in the copy pins a
+  single image instead (`peek`).
+
+  Positions are written straight to the elements. Nothing here goes through
+  React state, so a sweep across the box costs a handful of style writes rather
+  than a render per photo.
 */
 export default function TrailBox({ peek, className = '' }) {
   const boxRef = useRef(null)
-  const seq = useRef({ i: 0, last: 0 })
-  const timers = useRef(new Set())
-  const [cards, setCards] = useState([])
-  const [seen, setSeen] = useState(false)
+  const imgRefs = useRef([])
+  const timers = useRef([])
+  const index = useRef(0)
+  const last = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     const pending = timers.current
-    return () => {
-      pending.forEach(clearTimeout)
-      pending.clear()
-    }
+    return () => pending.forEach((t) => clearTimeout(t))
   }, [])
 
   const onMove = useCallback((e) => {
     const box = boxRef.current
     if (!box) return
 
-    const now = Date.now()
-    if (now - seq.current.last < THROTTLE) return
-    seq.current.last = now
-    setSeen(true)
+    const { clientX: x, clientY: y } = e
+    if (Math.hypot(x - last.current.x, y - last.current.y) < window.innerWidth / GAP) return
+    last.current = { x, y }
 
-    const i = seq.current.i++
-    const photo = TRAIL[i % TRAIL.length]
-    const tint = TINTS[i % TINTS.length]
+    const i = index.current
+    const lead = imgRefs.current[i % POOL.length]
+    // Proper modulo: the raw `i - TAIL` is negative on the first few moves, and
+    // a negative index would quietly take the tail off the wrong slot.
+    const tail = imgRefs.current[(((i - TAIL) % POOL.length) + POOL.length) % POOL.length]
 
-    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const rot = calm ? 0 : (Math.random() - 0.5) * 10
-    const ox = calm ? 0 : (Math.random() - 0.5) * 16
+    if (lead) {
+      const r = box.getBoundingClientRect()
+      lead.style.left = `${x - r.left}px`
+      lead.style.top = `${y - r.top}px`
+      lead.style.zIndex = `${(i % POOL.length) + 1}`
+      lead.dataset.status = 'active'
 
-    // Cards live inside the box, so clamp to keep each one fully within it.
-    const r = box.getBoundingClientRect()
-    const half = CARD / 2
-    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi)
-    const x = clamp(e.clientX - r.left + ox, PAD + half, Math.max(PAD + half, r.width - PAD - half))
-    const y = clamp(e.clientY - r.top, PAD + half, Math.max(PAD + half, r.height - PAD - half))
+      // Reusing a slot restarts its clock; the old timer would cut it short.
+      clearTimeout(timers.current[i % POOL.length])
+      timers.current[i % POOL.length] = setTimeout(() => {
+        lead.dataset.status = 'inactive'
+      }, LIFE)
+    }
+    if (tail && tail !== lead) tail.dataset.status = 'inactive'
 
-    const id = `${now}-${i}`
-    setCards((list) => [...list, { id, photo, tint, x, y, rot }])
-
-    const t = setTimeout(() => {
-      setCards((list) => list.filter((c) => c.id !== id))
-      timers.current.delete(t)
-    }, LIFE)
-    timers.current.add(t)
+    index.current = i + 1
   }, [])
 
   return (
     <div
       ref={boxRef}
       onMouseMove={onMove}
-      className={`trailbox relative mt-10 flex min-h-[clamp(240px,26vw,420px)] items-center justify-center overflow-hidden rounded-[10px] px-7 text-center max-[900px]:hidden ${className}`}
+      onTouchMove={(e) => onMove(e.touches[0])}
+      className={`trailbox relative mt-10 flex min-h-[clamp(240px,26vw,420px)] items-center justify-center overflow-hidden rounded-[10px] max-[900px]:hidden ${className}`}
     >
       {/* An SVG stroke is the only way to hold a 7px dash while the box resizes. */}
       <svg className="trailbox-frame" aria-hidden="true">
         <rect />
       </svg>
 
-      <span
-        className="font-mono text-[10px] tracking-[0.06em] text-ink-mute transition-opacity duration-700"
-        style={{ opacity: seen || peek ? 0 : 0.7, maxWidth: '34ch' }}
-      >
-        Hover around the underlined text, or wander your cursor through this space to show some
-        snapshots of my favorite things
-      </span>
-
-      {cards.map((c) => (
-        <div
-          key={c.id}
-          className="trail-card"
-          style={{
-            left: c.x,
-            top: c.y,
-            borderColor: c.tint,
-            '--rot': `${c.rot}deg`,
-            '--rot-in': `${c.rot * 1.1}deg`,
+      {POOL.map((photo, i) => (
+        <img
+          key={`${photo.src}-${i}`}
+          ref={(el) => {
+            imgRefs.current[i] = el
           }}
-        >
-          <img src={c.photo.src} alt="" />
-          <span className="tc-label">{c.photo.label}</span>
-        </div>
+          src={photo.src}
+          alt=""
+          data-status="inactive"
+          loading="lazy"
+          decoding="async"
+          className="pointer-events-none absolute w-[clamp(120px,13vw,180px)] -translate-x-1/2 -translate-y-1/2 scale-0 rounded-sm object-cover opacity-0 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] data-[status=active]:scale-100 data-[status=active]:opacity-100"
+          style={{ aspectRatio: '3 / 4' }}
+        />
       ))}
 
       {peek && (

@@ -1,9 +1,9 @@
+import switchback from '../assets/images/work-switchback.webm'
+import switchbackPoster from '../assets/images/work-switchback-poster.jpg'
 import accordant from '../assets/images/work-accordant.webm'
 import accordantPoster from '../assets/images/work-accordant.png'
 import dd from '../assets/images/work-dd.webp'
 import ddStill from '../assets/images/work-dd-still.jpg'
-import flux from '../assets/images/work-flux.webm'
-import fluxPoster from '../assets/images/work-flux.png'
 import google from '../assets/images/work-google.gif'
 import googleStill from '../assets/images/work-google-still.jpg'
 
@@ -44,16 +44,17 @@ export const PROJECTS = [
     alt: 'Delta Dental’s online enrollment platform',
   },
   {
-    id: 'flux',
-    href: '/work/flux',
+    id: 'switchback',
+    href: '/work/switchback',
     span: 2,
-    tag: 'AI · Productivity',
-    title: 'AI-Driven Tools for Remote Teams',
-    blurb: 'Ambient tools that cut coordination overhead for remote teams, without adding another dashboard to check.',
-    year: '2024',
-    video: flux,
-    still: fluxPoster,
-    alt: 'Flux, a workspace digest of a remote team’s threads and meetings',
+    tag: 'Product · Concept',
+    title: 'A Hiking App for the Trip, Not the Trail',
+    blurb:
+      'The coordination layer between finding a trail and reaching the trailhead: group decisions, claimed responsibility, and daylight everyone can see.',
+    year: '2026',
+    video: switchback,
+    still: switchbackPoster,
+    alt: 'Switchback, a social coordination app for small-group day hikes',
   },
   {
     id: 'accordant',
@@ -67,16 +68,5 @@ export const PROJECTS = [
     video: accordant,
     still: accordantPoster,
     alt: 'Accordant’s component browser and comparison views',
-  },
-  {
-    id: 'switchback',
-    href: '/work/switchback',
-    span: 5,
-    tag: 'Product · Concept',
-    title: 'A Hiking App for the Trip, Not the Trail',
-    blurb:
-      'The coordination layer between finding a trail and reaching the trailhead: group decisions, claimed responsibility, and daylight everyone can see.',
-    year: '2026',
-    alt: 'Switchback, a social coordination app for small-group day hikes',
   },
 ]

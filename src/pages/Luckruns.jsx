@@ -1,8 +1,8 @@
+import BottleCarousel from '../components/luckruns/BottleCarousel'
 import Link from '../components/Link'
-import { Body, Eyebrow, H2, Slot } from '../components/case/parts'
+import { Body, Eyebrow, H2 } from '../components/case/parts'
 import bench from '../assets/luckruns/bench.jpg'
 import logo from '../assets/luckruns/logo.png'
-import { FRAGRANCES } from '../data/luckruns'
 
 export default function Luckruns() {
   return (
@@ -84,27 +84,24 @@ export default function Luckruns() {
         </Body>
       </section>
 
-      {/* The collection. */}
-      <ol className="mt-[clamp(3rem,6vw,5.5rem)] grid list-none grid-cols-1 gap-x-5 gap-y-9 p-0 sm:grid-cols-3">
-        {FRAGRANCES.map((f) => (
-          <li key={f.id}>
-            {f.image ? (
-              <img
-                src={f.image}
-                alt={f.name}
-                loading="lazy"
-                decoding="async"
-                className="aspect-square w-full rounded-xl object-cover"
-              />
-            ) : (
-              <Slot label={f.name} ratio="1 / 1" />
-            )}
-            {/* The number lives in the name now, so there's no separate column. */}
-            <p className="mt-3 text-[0.95rem] leading-snug">{f.name}</p>
-            <p className="text-[0.95rem] leading-snug text-ink-soft">{f.notes}</p>
-          </li>
-        ))}
-      </ol>
+      <BottleCarousel />
+
+      <section className="mt-[clamp(3rem,6vw,5.5rem)] max-w-[62rem] pb-[clamp(4rem,8vw,7rem)]">
+        <Eyebrow>Work in progress</Eyebrow>
+        <H2 className="mt-[15px]">Still being blended.</H2>
+        <Body className="mt-[20px]">
+          Luckruns is a work in progress. The formulas, bottles and names are still changing, and
+          nothing is for sale just yet. If you&rsquo;re curious about a scent, want to try one, or
+          would like to collaborate, I&rsquo;d love to hear from you.
+        </Body>
+        {/* Same pill as the site's other buttons, with the acid hover. */}
+        <a
+          href="mailto:tostevenheng@gmail.com?subject=Luckruns"
+          className="mt-8 inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-2.5 text-[0.95rem] text-ink transition-colors duration-200 hover:bg-acid/60"
+        >
+          Contact me <span aria-hidden="true">&rarr;</span>
+        </a>
+      </section>
     </main>
   )
 }

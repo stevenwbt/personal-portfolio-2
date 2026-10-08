@@ -1,5 +1,29 @@
 @import 'tailwindcss';
 
+/**
+ * @license
+ * MyFonts Webfont Build ID 3867246, 2020-12-16T11:57:38-0500
+ *
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are
+ * explicitly restricted from using the Licensed Webfont(s).
+ *
+ * Webfont: Recoleta Regular by Latinotype
+ * URL: https://www.myfonts.com/collections/latinotype-foundry
+ *
+ * © 2026 MyFonts Inc.
+ */
+@font-face {
+  font-family: 'Recoleta';
+  src:
+    url('./assets/fonts/recoleta-regular.woff2') format('woff2'),
+    url('./assets/fonts/recoleta-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  /* Newsreader carries the text until Recoleta lands, rather than nothing. */
+  font-display: swap;
+}
+
 @theme {
   /*
     Helvetica Neue is a system face on Apple platforms, so it loads with no
@@ -8,10 +32,10 @@
   --font-sans: 'Helvetica Neue', 'Inter', Arial, sans-serif;
   /*
     The display face: nav, headings, case-study titles, stat figures.
-    Recoleta goes in front of this once the webfont licence lands — see
-    "Recoleta" in the README. Newsreader stays as the fallback.
+    Recoleta is the site's serif, licensed as a webfont and self-hosted above.
+    Newsreader stays behind it as the fallback while the file loads.
   */
-  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+  --font-serif: 'Recoleta', 'Newsreader', ui-serif, Georgia, serif;
   --font-nav: var(--font-serif);
   --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, monospace;
 
@@ -152,23 +176,12 @@ body {
   stroke-dasharray: 7 7;
 }
 
-.trail-card,
 .peek-card {
   position: absolute;
   pointer-events: none;
   overflow: hidden;
   background: var(--color-veil);
   will-change: transform, opacity;
-}
-
-.trail-card {
-  z-index: 2;
-  width: 185px;
-  aspect-ratio: 1;
-  border-radius: 3px;
-  border: 1px solid;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
-  animation: trail-pop 1.4s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
 /* The snapshot a hovered word pins, centred in the box. Height drives the
@@ -186,7 +199,6 @@ body {
   animation: peek-in 0.38s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
-.trail-card img,
 .peek-card img {
   position: absolute;
   inset: 0;
@@ -217,21 +229,6 @@ body {
   }
 }
 
-@keyframes trail-pop {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.82) rotate(var(--rot-in, 0deg));
-  }
-  16%,
-  46% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1) rotate(var(--rot, 0deg));
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -58%) scale(0.94) rotate(var(--rot, 0deg));
-  }
-}
 
 @keyframes peek-in {
   from {
@@ -337,4 +334,55 @@ body {
   .animate-stamp {
     animation: none;
   }
+}
+
+/*
+  The opening doubles as a loading screen.
+
+  While `data-intro` is set, the only things on screen are the nine pieces
+  finding their places and the label they circle. Everything else — the nav,
+  the headline, the clock, the sections below — waits, then fades in together
+  once they land. The page is held still meanwhile, so there's nothing to
+  scroll into while it plays.
+*/
+/*
+  Reserve the scrollbar's space whether or not it's showing.
+
+  The loading screen locks scrolling, which takes the scrollbar away. The nav
+  is fixed across the viewport *inside* the scrollbar, and its links are
+  centred — so without this the bar widens while the intro runs and the links
+  jump left the moment the page is handed back. Browsers with overlay
+  scrollbars ignore this, having nothing to reserve.
+*/
+html {
+  scrollbar-gutter: stable;
+}
+
+html[data-intro],
+html[data-intro] body {
+  overflow: hidden;
+}
+
+nav[aria-label='Primary'],
+[data-intro-hide] {
+  transition: opacity 700ms ease 120ms;
+}
+
+/* `!important` because the nav, the headline and the clock all carry
+   `animate-rise`, and a running animation outranks a normal declaration —
+   without it they fade themselves back in over the top of the loading screen. */
+/* The nav comes back before the rest, so the photographs folding away have
+   its clover to fold into. */
+html[data-intro][data-intro-nav] nav[aria-label='Primary'] {
+  opacity: 1 !important;
+  transition: opacity 420ms ease !important;
+}
+
+html[data-intro] nav[aria-label='Primary'],
+html[data-intro] [data-intro-hide] {
+  opacity: 0 !important;
+  pointer-events: none;
+  /* Hiding is instant; only the reveal is worth animating. With a transition
+     on both directions the page fades *out* at load, which reads as a flash. */
+  transition: none !important;
 }

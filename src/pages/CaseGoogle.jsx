@@ -7,7 +7,6 @@ import {
   H2,
   MotionFigure,
   NumberedCard,
-  Slot,
 } from '../components/case/parts'
 import {
   IMAGES,
@@ -32,7 +31,12 @@ export default function CaseGoogle() {
     >
       {/* ── Overview ── */}
       <section id="overview" className="case-section scroll-mt-32">
-        <Slot label="Overview visual" />
+        {/* The capstone team, as the capstone team actually looked. */}
+        <Figure
+          src={IMAGES.bereal}
+          alt="Five BeReal captures from the capstone: the team at their desks, a Google office, and someone face-down on the floor"
+          className="rounded-xl"
+        />
         <Eyebrow>Overview</Eyebrow>
           <H2>Automating Android security patch porting with LLMs.</H2>
           <Body>
