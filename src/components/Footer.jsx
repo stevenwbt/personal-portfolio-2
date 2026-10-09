@@ -1,4 +1,5 @@
 import wordmark from '../assets/images/thanks-for-steing.svg'
+import { RESUME_URL } from '../data/stage'
 
 /*
   The run-out before the footer lives here rather than on each page, so every
@@ -29,9 +30,14 @@ export default function Footer() {
 
       <hr className="mt-8 border-0 border-t border-ink/15" />
 
-      <div className="mt-5 flex flex-col gap-3 font-mono text-[clamp(0.75rem,0.95vw,0.9rem)] tracking-[0.08em] text-blush uppercase sm:flex-row sm:items-baseline sm:justify-between">
-        <p>© 2026 Steven Heng + iced americanos + React</p>
-        <a href="#resume" className="transition-colors duration-200 hover:text-ink">
+      <div className="mt-5 flex items-baseline justify-between gap-3 font-mono text-[clamp(0.75rem,0.95vw,0.9rem)] tracking-[0.08em] text-blush uppercase">
+        <p>© 2026 Steven Heng</p>
+        <a
+          href={RESUME_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors duration-200 hover:text-ink"
+        >
           Resume
         </a>
       </div>

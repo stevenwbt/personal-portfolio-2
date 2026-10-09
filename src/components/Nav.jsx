@@ -11,7 +11,9 @@ import { NAV_LINKS, NAV_TRAILING } from '../data/stage'
 */
 function NavItem({ link, subpage, className }) {
   const isRoute = link.href.startsWith('/')
-  const href = isRoute || !subpage ? link.href : `/${link.href}`
+  // Off-site links (the résumé on Drive) open in a new tab, untouched.
+  const external = /^https?:/.test(link.href)
+  const href = isRoute || external || !subpage ? link.href : `/${link.href}`
   // `leading-none` so the hover pill is set by the padding, not by inherited
   // line height — at this bar height that's the difference between air and none.
   const style = `block rounded-full px-3 py-1 font-nav text-[0.85rem] leading-none text-ink transition-colors duration-200 hover:bg-acid/60 sm:px-4 sm:py-1.5 sm:text-[clamp(0.88rem,0.95vw,1.05rem)] ${className ?? ''}`
@@ -21,7 +23,11 @@ function NavItem({ link, subpage, className }) {
       {link.label}
     </Link>
   ) : (
-    <a href={href} className={style}>
+    <a
+      href={href}
+      className={style}
+      {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
+    >
       {link.label}
     </a>
   )

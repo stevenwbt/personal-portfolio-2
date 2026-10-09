@@ -76,4 +76,5 @@ export const NAV_LINKS = [
 ]
 
 /* The résumé is a document, not a section — so it sits on its own, far right. */
-export const NAV_TRAILING = { label: 'resume', href: '#resume' }
+export const RESUME_URL = 'https://drive.google.com/file/d/17OWyvCMXUwu5Y6-AAozmdu_gBQpx8xs9/view?usp=sharing'
+export const NAV_TRAILING = { label: 'resume', href: RESUME_URL }

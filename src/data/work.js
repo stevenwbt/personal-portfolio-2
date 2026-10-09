@@ -28,6 +28,7 @@ export const PROJECTS = [
     year: '2025',
     motion: google,
     still: googleStill,
+    ratio: '1600 / 790',
     alt: 'Automating Android security patch porting with LLMs, at Google',
   },
   {
@@ -41,6 +42,7 @@ export const PROJECTS = [
     year: '2025',
     motion: dd,
     still: ddStill,
+    ratio: '1200 / 907',
     alt: 'Delta Dental’s online enrollment platform',
   },
   {
@@ -54,6 +56,7 @@ export const PROJECTS = [
     year: '2026',
     video: switchback,
     still: switchbackPoster,
+    ratio: '1400 / 1059',
     alt: 'Switchback, a social coordination app for small-group day hikes',
   },
   {
@@ -67,6 +70,7 @@ export const PROJECTS = [
     year: '2026',
     video: accordant,
     still: accordantPoster,
+    ratio: '1600 / 790',
     alt: 'Accordant’s component browser and comparison views',
   },
 ]

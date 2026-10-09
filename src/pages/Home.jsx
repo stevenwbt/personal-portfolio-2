@@ -7,13 +7,19 @@ import LandingIntro from '../components/LandingIntro'
 import Snapshot from '../components/Snapshot'
 import Work from '../components/Work'
 import Wordmark from '../components/Wordmark'
-import { CHIPS, PHOTOS } from '../data/stage'
+import { PHOTOS } from '../data/stage'
+
+// Kept across route changes, reset by a refresh — same as the stamped clovers.
+let wordmarkShown = false
 
 export default function Home() {
   const stageRef = useRef(null)
   // The wordmark stays hidden until the visitor forms their first clover.
-  const [revealed, setRevealed] = useState(false)
-  const reveal = useCallback(() => setRevealed(true), [])
+  const [revealed, setRevealed] = useState(wordmarkShown)
+  const reveal = useCallback(() => {
+    wordmarkShown = true
+    setRevealed(true)
+  }, [])
   /* The squares sit still while the opening animation is placing them. */
   const [introRunning, setIntroRunning] = useState(true)
   const endIntro = useCallback(() => setIntroRunning(false), [])
@@ -40,13 +46,6 @@ export default function Home() {
         <ChipField stageRef={stageRef} onClover={reveal} idle={introRunning} />
 
         <LandingIntro stageRef={stageRef} onFinish={endIntro} />
-
-        {/* Phones get the same four squares, at rest. */}
-        <div className="mt-10 flex gap-3 lg:hidden" aria-hidden="true">
-          {CHIPS.map((chip) => (
-            <div key={chip.id} className="size-8" style={{ background: chip.color }} />
-          ))}
-        </div>
 
         <Footprint />
       </section>

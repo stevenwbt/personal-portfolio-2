@@ -17,6 +17,14 @@ const TIP_CHIP = 0 // the square the onboarding tooltip starts on
 const pct = (v) => parseFloat(v) / 100
 
 /*
+  Survives leaving the homepage and coming back, but not a refresh: it lives in
+  the module, which a client-side route change keeps and a page load resets.
+  Stamped clovers, where the squares were scattered to, and how many rounds
+  have been played (so the onboarding tooltip doesn't come back).
+*/
+const memory = { stickers: [], homes: null, rounds: 0 }
+
+/*
   Pick-up order is the lobe: this clover's lobes sit at 12 / 3 / 6 / 9 o'clock,
   so the first square picked takes the top one and the rest follow clockwise.
   Colour is no longer per-lobe — a formed clover is one green.
@@ -118,8 +126,8 @@ function scatterHomes(W, H, size, stickers) {
 */
 export default function ChipField({ stageRef, onClover, idle = false }) {
   const wrapRefs = useRef([])
-  const [stickers, setStickers] = useState([])
-  const [cycle, setCycle] = useState(0)
+  const [stickers, setStickers] = useState(memory.stickers)
+  const [cycle, setCycle] = useState(memory.rounds)
   // Which chips are in hand, and which quadrant each took, by pick-up order.
   const [held, setHeld] = useState(() => CHIPS.map(() => -1))
   const pathRefs = useRef([])
@@ -138,8 +146,8 @@ export default function ChipField({ stageRef, onClover, idle = false }) {
     ready: false,
     size: 0,
     stage: { w: 0, h: 0 },
-    homes: FIRST_HOMES, // fractions, so they survive a resize
-    stickers: [],
+    homes: memory.homes ?? FIRST_HOMES, // fractions, so they survive a resize
+    stickers: memory.stickers,
     chips: CHIPS.map(() => ({ x: 0, y: 0, attached: false, order: -1 })),
     pointer: { x: 0, y: 0, live: false },
     attached: 0,
@@ -261,6 +269,9 @@ export default function ChipField({ stageRef, onClover, idle = false }) {
       w.stickers = [...w.stickers, sticker].slice(-MAX_STICKERS)
       setStickers(w.stickers)
       respawn()
+      memory.stickers = w.stickers
+      memory.homes = w.homes
+      memory.rounds += 1
     }
 
     function onMove(e) {
